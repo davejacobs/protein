@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby
+
+require 'pathname'
+require 'protein'
+
+def usage
+  puts <<-HERE
+
+  Usage: protein /your/project/directory
+
+  Make sure that the following are done:
+
+    1. Updated patient log exists as a .tsv file called Log.tsv
+    2. Updated platemap exists as a .tsv file called Platemap.tsv
+    3. All data is separated by scan date into directories
+    4. Each of those directories has a .txt or .tsv data file
+       labeled as follows:
+       
+       mmddyy-SSS (min-max)
+       
+         - OR -
+
+       mmddyy_SSS_min_max
+
+       mm = month printed
+       dd = day
+       yy = year
+       SSS = slide number
+       min-max = gain range
+
+       Examples:
+       
+       082010-149 (50-90).tsv
+       082010-149 (50-90).txt
+       082010_149_50_90.tsv
+
+    5. A corresponding .jpg file exists for each data file
+
+  HERE
+  exit 1
+end
+
+usage unless ARGV[0] and File.directory? ARGV[0]
+
+root = Pathname.new(ARGV[0]).expand_path
+puts "[initializing] root #{root}"
+
+usage unless Protein::SlideSet.new(root, true)
